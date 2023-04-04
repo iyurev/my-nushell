@@ -55,5 +55,5 @@ export def scm-update-zoxie-db [server_name: string@scm-servers] {
 }
 
 export def scm-projects [server_name: string@scm-servers] {
-    run-external find $"($nu.home-path)/src/($server_name)/"  "-type" "d"  "-name" '.git'  --redirect-stdout  | lines | str replace '/\.git' ''
+    run-external find $"($nu.home-path)/src/($server_name)/"  "-type" "d"  "-name" '.git'  --redirect-stdout  | lines | split column '/.git' | get column1
 }
