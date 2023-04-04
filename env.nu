@@ -18,7 +18,7 @@ source  ~/.nu/werf.nu
 source  ~/.nu/tools.nu
 use ~/.nu/gc.nu
 use ~/.nu/ansible.nu
-use  ~/.nu/pt.nu
+use  ~/.nu/pt.nu *
 use  ~/.nu/kc.nu *
 
 

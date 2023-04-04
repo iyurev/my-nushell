@@ -4,6 +4,7 @@ def gcp_zones [] {
         "me-west1-a",
         "europe-north1-a",
         "europe-west3-a"
+        "europe-west4-a"
     ]
 }
 
@@ -14,6 +15,7 @@ def gcp_machine_types [] {
         "e2-medium",
         "n2-standard-2",
         "n2d-custom-4-8192",
+        "c3-standard-4"
         
     ]
 }
@@ -49,15 +51,16 @@ export def create-vm [
     name: string
     --project: string@gcp_list_projects
     --zone: string@gcp_zones
-    --machine_type: string@gcp_machine_types = "STANDARD"
-    --provisioning_model: string@provisioning_models
+    --machine_type: string@gcp_machine_types
+    --provisioning_model: string@provisioning_models = "STANDARD"
     --disk_type: string@gcp_disk_types 
     --disk_size: string@gcp_disk_sizes] {
     let project_name = $project
-    let image = "ubuntu-dev-pack-2204-010"
+    let image = "devops-pack-010"
     let ssh_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKmSKFjQCh1hohQQJOWvxILjBceq1E+ZmrTAE90uQ6ST developer@gmail.com"
     let username = "developer"
-    gcloud compute instances create $name $"--project=($project_name)" $"--zone=($zone)" $"--machine-type=($machine_type)" --network-interface=network-tier=PREMIUM,subnet=default  --maintenance-policy=MIGRATE $"--provisioning-model=($provisioning_model)" --service-account=700122225442-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append $"--create-disk=auto-delete=yes,boot=yes,device-name=instance-1,image=projects/gothic-concept-349709/global/images/($image),mode=rw,size=($disk_size),type=projects/gothic-concept-349709/zones/us-central1-a/diskTypes/($disk_type)" --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any
+    let maintenance_policy = if $provisioning_model == "STANDARD" { "MIGRATE" } else { "TERMINATE" }
+    gcloud compute instances create $name $"--project=($project_name)" $"--zone=($zone)" $"--machine-type=($machine_type)" --network-interface=network-tier=PREMIUM,subnet=default  $"--maintenance-policy=($maintenance_policy)" $"--provisioning-model=($provisioning_model)" --service-account=700122225442-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append $"--create-disk=auto-delete=yes,boot=yes,device-name=instance-1,image=projects/gothic-concept-349709/global/images/($image),mode=rw,size=($disk_size),type=projects/gothic-concept-349709/zones/us-central1-a/diskTypes/($disk_type)" --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any
 }
 
 def instance_args [] {

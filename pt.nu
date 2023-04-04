@@ -8,7 +8,7 @@ def base_path_from_url [url: string] {
 
 def local_path_from_url [url: string local_dir: string] {
     let base_path = (base_path_from_url $url)
-    let project_name = ($url | split row '/' | last | split row '.' | first)
+    let project_name = ($url | split row '/' | last | split row '.' | range 0..-2 | str join '.')
     $"($local_dir)/($base_path)/($project_name)"
 }
 
@@ -24,7 +24,7 @@ def mirror_to_remote_host [
 }
 
 
-export def pull [repo_url: string --mirror_to_host: string --remote_user: string] {
+export def scm-clone [repo_url: string --mirror_to_host: string --remote_user: string] {
     let remote_user = remote_username $remote_user
     let editor = "goland"
     let local_dir = $"($nu.home-path)/src"
@@ -44,4 +44,16 @@ export def pull [repo_url: string --mirror_to_host: string --remote_user: string
     } else {
         ^$editor $local_project_path
     }
+}
+
+export def scm-servers [] {
+    ls -la $"($nu.home-path)/src/" | get name  | split column  '/src/' | get column2 |  str trim
+}
+
+export def scm-update-zoxie-db [server_name: string@scm-servers] {
+    scm-projects $server_name | each {|project_path| zoxide add $project_path}
+}
+
+export def scm-projects [server_name: string@scm-servers] {
+    run-external find $"($nu.home-path)/src/($server_name)/"  "-type" "d"  "-name" '.git'  --redirect-stdout  | lines | str replace '/\.git' ''
 }

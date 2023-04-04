@@ -85,6 +85,7 @@ export def-env kc-set-namespace [namespace: string@list-namespaces] {
     let-env KUBE_NAMESPACE = $namespace
 }
 
+
 export def-env kc-set-context [namespace: string@list-namespaces] {
    
 }
@@ -93,7 +94,7 @@ export def-env kc-set-context [namespace: string@list-namespaces] {
 def list-objects-in-namespace [namespace: string kind: string] {
     kubectl -n $namespace get  $kind -ojson | jq   '.items[].metadata.name'| jq  -s | from json
 }
-#kubectl api-resources
+#kubectl api-resources - kubectl api-resources | dtc | select NAME
 
 export def kc-search-ns [name: string] {
     kubectl get ns -ojson | from json | get items |  where  metadata.name =~ $name | get metadata.name
