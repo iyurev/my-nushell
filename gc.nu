@@ -15,7 +15,9 @@ def gcp_machine_types [] {
         "e2-medium",
         "n2-standard-2",
         "n2d-custom-4-8192",
-        "c3-standard-4"
+        "c3-standard-4",
+        "c3-highcpu-4",
+        "c3-highcpu-8"
         
     ]
 }

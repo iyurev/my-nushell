@@ -12,6 +12,10 @@ def  git-time-tag [branch: string] {
     $"(date now | date format '%Y%m%d%H%M')-($branch)"
 }
 
+def ps-grep [name: string] {
+    ps | where name =~ $name
+}
+
 def ssh_xterm [host: string] {
     TERM=xterm-256color ssh $host
 }

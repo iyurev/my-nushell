@@ -24,7 +24,7 @@ def mirror_to_remote_host [
 }
 
 
-export def scm-clone [repo_url: string --mirror_to_host: string --remote_user: string] {
+export def clone [repo_url: string --mirror_to_host: string --remote_user: string] {
     let remote_user = remote_username $remote_user
     let editor = "goland"
     let local_dir = $"($nu.home-path)/src"
@@ -46,14 +46,28 @@ export def scm-clone [repo_url: string --mirror_to_host: string --remote_user: s
     }
 }
 
-export def scm-servers [] {
+export def servers [] {
     ls -la $"($nu.home-path)/src/" | get name  | split column  '/src/' | get column2 |  str trim
 }
 
-export def scm-update-zoxie-db [server_name: string@scm-servers] {
+export def update-zoxie-db [server_name: string@servers] {
     scm-projects $server_name | each {|project_path| zoxide add $project_path}
 }
 
-export def scm-projects [server_name: string@scm-servers] {
+export def projects [server_name: string@servers] {
     run-external find $"($nu.home-path)/src/($server_name)/"  "-type" "d"  "-name" '.git'  --redirect-stdout  | lines | split column '/.git' | get column1
+}
+
+export def projects-fzf [server_name: string@servers] {
+      projects $server_name | to text | fzf
+}
+
+export def project-edit-in-vscode [server_name: string@servers] {
+     code  (projects-fzf $server_name | str trim)
+
+}
+
+
+export def zoxide-list-all [] {
+    zoxide  query --list | fzf 
 }
