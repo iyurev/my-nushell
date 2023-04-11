@@ -69,6 +69,10 @@ def instance_args [] {
     ["compute", "instances"]
 }
 
+def list-vm-by-name [] {
+    gcloud compute instances list --format=json | from json | get name
+}
+
 #List all compute instance in a project.
 export def list-vm [--project: string@gcp_list_projects] { 
     let default_args = (instance_args | append "list")
@@ -76,12 +80,14 @@ export def list-vm [--project: string@gcp_list_projects] {
     gcloud $args  
 }
 #Start compute instance.
-export def start-vm [--project: string@gcp_list_projects name: string] { 
+export def start-vm [--project: string@gcp_list_projects
+                     name: string@list-vm-by-name
+                     ] { 
     let args = (instance_args | append "start" | append $name | append $"--project=(default_project_name $project)")
     gcloud $args
 }
 #Stop compute instance.
-export def stop-vm [--project: string@gcp_list_projects name: string] { 
+export def stop-vm [--project: string@gcp_list_projects name: string@list-vm-by-name] { 
     let args = (instance_args | append "stop" | append $name | append $"--project=(default_project_name $project)" )
     gcloud $args
 }
