@@ -20,6 +20,7 @@ use ~/.nu/gc.nu
 use ~/.nu/ansible.nu
 use  ~/.nu/scm.nu
 use  ~/.nu/kc.nu *
+use ~/.nu/ts.nu 
 
 
 
