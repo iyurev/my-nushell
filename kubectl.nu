@@ -12,7 +12,7 @@ def resource_kind_dynamic [] {
 
 def namespace_from_ctx [ctx: string] {
     let cmd_list = ($ctx| split column (char space)  -c | get 0 | values)
-    let namespace_name = (for --numbered  v in $cmd_list {  if $v.item == "-n" { return  ($cmd_list | get ($v.index + 1) ) }  } )
+    let namespace_name = (for --numbered  v in $cmd_list {  if $v.item == "-n" or $v.item == "--namespace" { return  ($cmd_list | get ($v.index + 1) ) }  } )
     $namespace_name
 }
 
@@ -27,8 +27,6 @@ def resource_name_dynamic [ctx: string] {
     let kind = (resource_kind_from_ctx $ctx)
     kubectl -n (namespace_from_ctx $ctx) get $kind -ojson | from json | get items | get metadata.name
 }
-
-
 
 def list_namespaces [] {
     kubectl get ns -o json | from json | get items |  get metadata.name

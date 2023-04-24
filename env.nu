@@ -19,7 +19,8 @@ source  ~/.nu/tools.nu
 use ~/.nu/gc.nu
 use ~/.nu/ansible.nu
 use  ~/.nu/scm.nu
-use  ~/.nu/kc.nu *
+use  ~/.nu/ks.nu
+use ~/.nu/kubectl.nu *
 use ~/.nu/ts.nu 
 
 
