@@ -14,7 +14,6 @@ let-env HOME = $home
 let my_nushell = $"($home)/Documents/github.com/iyurev/my-nushell"
 
 source  ~/.nu/kind.nu
-source  ~/.nu/werf.nu
 source  ~/.nu/tools.nu
 use ~/.nu/gc.nu
 use ~/.nu/ansible.nu
