@@ -30,7 +30,7 @@ export def-env set-kubeconfig [path: string@list-kubeconfigs] {
 }
 
 export def search-ns [name: string] {
-    kubectl get ns -ojson | from json | get items |  where  metadata.name =~ $name | get metadata.name
+    kubectl get ns -o json | from json | get items |  where  metadata.name =~ $name | get metadata.name
 }
 
 export def get-by-label [namespace: string@list-namespaces kind: string@resource_kind_dynamic label: string] {
