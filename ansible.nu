@@ -1,7 +1,6 @@
 def ansible_container_images [] {
     [
         "ghcr.io/ansible/creator-ee:v0.13.0",
-        "harbor.vseinstrumenti.ru/vi/docker-ansible/docker-ansible:1.1.0"
     ]
 }
 

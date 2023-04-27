@@ -17,18 +17,18 @@ def create-cluster-flags [] {
     ]
 }
 
-export def-env kd-create [name: string] {
+export def-env create [name: string] {
     let kubeconfig_path  = $"/tmp/($name)-kubeconfig"
     kind create cluster  --name ($name) --kubeconfig ($kubeconfig_path)
     let-env KUBECONFIG = $kubeconfig_path
     let-env KUBE_CONFIG_PATH = $kubeconfig_path
 }
 
-export def kd-list [] {
+export def list [] {
     kind get clusters 
      
 }
-export def kd-delete [name: string] {
+export def delete [name: string] {
     if ($name == 'all') {
         kind delete clusters --all   
     } else {

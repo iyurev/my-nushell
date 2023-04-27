@@ -61,7 +61,7 @@ export def local_path_from_git_url [
         url: string #SSH or HTTP git repository URL.
         ] {
         let base_local_path = ($base_local_path | path expand)
-        let url_to_dir = if is_ssh_url $url {
+        let url_to_dir = if (is_ssh_url $url) {
              ($url | split column "@"  | get column2 | str replace  ':' '/'  | split column '.git' | get column1 | get 0 | str trim)
         } else {
             ($url | url parse | $"($in.host)($in.path)" | split column '.git' | get column1 | get 0 | str trim)
