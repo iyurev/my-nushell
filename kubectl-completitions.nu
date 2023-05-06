@@ -28,7 +28,7 @@ def validate [] {
 }
 
 def resource_kind_dynamic [] {
-    kubectl api-resources | dtc | get NAME
+    (^kubectl api-resources | detect columns | get NAME)
 }
 
 def namespace_from_ctx [ctx: string] {
@@ -46,11 +46,11 @@ def resource_kind_from_ctx [ctx: string] {
 
 def resource_name_dynamic [ctx: string] {
     let kind = (resource_kind_from_ctx $ctx)
-    kubectl -n (namespace_from_ctx $ctx) get $kind -o json | from json | get items | get metadata.name
+    ^kubectl -n (namespace_from_ctx $ctx) get $kind -o json | from json | get items | get metadata.name
 }
 
-def list_namespaces [] {
-    kubectl get ns -o json | from json | get items |  get metadata.name
+def "nu-complete namespaces" [] {
+    ^kubectl get ns -ojson | from json | get items |  get metadata.name
 }
 
 #Display one or many resources
@@ -62,7 +62,7 @@ export extern "kubectl get" [
     --selector(-l): string #Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2). Matchingobjects must satisfy all of the specified label constraints.
     --filename(-f): string #Filename, directory, or URL to files identifying the resource to get from a server.
     --watch(-w) #After listing/getting the requested object, watch for changes.
-    --namespace(-n): string@list_namespaces #Set context for kubernetes namespace.
+    --namespace(-n): string@"nu-complete namespaces" #Set context for kubernetes namespace.
 ]
 
 # Show details of a specific resource or group of resources.
@@ -104,6 +104,29 @@ export extern "kubectl create namespace" [
     --windows-line-endings #Default: false. Only relevant if --edit=true. Defaults to the line ending native to your platform.
     --help #Get original help message.
 ]
+
+def loggable_kinds [] {
+    [
+        "deployment",
+        "job",
+        "cronjob"
+    ]
+}
+
+#Print the logs for a container in a pod or specified resource. If the pod has only one container, the container name is optional.
+export extern "kubectl logs" [
+    kind?: string@loggable_kinds
+    --follow(-f) #Specify if the logs should be streamed.
+    --container(-c): string #Print the logs of this container.
+    --all-containers #Get all containers' logs in the pod(s).
+    --tail: int #Lines of recent log file to display. Defaults to -1 with no selector, showing all log lines otherwise 10, if a selector is provided.
+]
+
+# export extern "kubectl cordon" [
+    
+# ]
+
+
 #Create a service using a specified subcommand.
 export extern "kubectl create service" [
 
@@ -113,6 +136,45 @@ export extern "kubectl create service" [
 export extern "kubectl create service clusterip" [
     name: string
     --validate: string@validate # Must be one of: strict (or true), warn, ignore (or false).
+]
+
+def subcommands [] {
+    [
+    'get',
+    'logs'
+    ]
+}
+
+export extern "kubectl" [
+    --as: string
+    --as-group: string
+    --as-uid: string
+    --cache-dir: string = '/Users/iyurev/.kube/cache'
+    --certificate-authority: string
+    --client-certificate: string
+    --client-key: string
+    --cluster: string
+    --context: string
+    --disable-compression: string
+    --insecure-skip-tls-verify: string
+    --kubeconfig: string
+    --log-flush-frequency:  string = "5s"
+    --match-server-version
+    --namespace(-n): string@"nu-complete namespaces" #Set context for kubernetes namespace.
+    --password: string
+    --profile: string
+    --profile-output: string
+    --request-timeout: string
+    --server(-s): string
+    --tls-server-name: string
+    --token: string
+    --user: string
+    --username: string
+    -v: int
+    --vmodule: string
+    --warnings-as-errors
+    subcommand?: string@subcommands
+    
 ]
 
 

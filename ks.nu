@@ -1,10 +1,10 @@
 def resource_kind_dynamic [] {
-    kubectl api-resources | dtc | get NAME
+    ^kubectl api-resources | dtc | get NAME
 }
 
 
 def list-namespaces [] {
-    kubectl get ns --output json | from json | get items | get metadata.name
+    ^kubectl get ns --output json | from json | get items | get metadata.name
 }
 
 def list-kubeconfigs [] {
@@ -16,7 +16,7 @@ def list-clusters [] {
 }
 
 def kc-get-in-all-namespaces [kind: string] {
-    kc get $kind -A -ojson  | from json | get items
+    ^kubectl get $kind -A -o json  | from json | get items
 }
 
 export def-env set-namespace [namespace: string@list-namespaces] {
@@ -30,15 +30,19 @@ export def-env set-kubeconfig [path: string@list-kubeconfigs] {
 }
 
 export def search-ns [name: string] {
-    kubectl get ns -o json | from json | get -i items |  where  metadata.name =~ $name | get metadata.name
+    ^kubectl get ns -o json | from json | get -i items |  where  metadata.name =~ $name | get metadata.name
 }
 
 export def get-by-label [namespace: string@list-namespaces kind: string@resource_kind_dynamic label: string] {
-    kubectl -n $namespace get -l $label  $kind -oname
+    ^kubectl -n $namespace get -l $label  $kind -oname
 }
 
 export def get-all-failed-pods [] {
         kc-get-in-all-namespaces  pods | where status.phase == "Failed" | select  metadata.namespace metadata.name status.phase
+}
+
+export def get-all-pending-pods [] {
+        kc-get-in-all-namespaces  pods | where status.phase == "Pending" | select  metadata.namespace metadata.name status.phase
 }
 
 
