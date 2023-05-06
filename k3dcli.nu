@@ -2,16 +2,18 @@ def cluster_already_exists [err: string] {
     let err_suffix = 'because a cluster with that name already exists'
     $err | str contains $err_suffix
 }
+def list-cluster-names [] { ^k3d cluster list -oyaml | from yaml | get name }
 
 #Shortcut for creating DEV K8S clusters
-export def-env cluster-list [
+export def-env cluster-create [
     name: string #Kubernetes cluster name
     --expose_ingress: bool #Expose tcp/80 and tcp/443 network ports from cluster nodes
+    --export_kubeconfig: bool = true #Export environment variable KUBECONFIG
     ] {
     let default_args = ["cluster", "create", $name, "--kubeconfig-update-default=false"]
     let expose_ingress_args = ["--port",  "80:80@loadbalancer", "--port", "443:443@loadbalancer"]
     let args = if $expose_ingress == true { $default_args | append expose_ingress_args  } else { $default_args }
-    $args
+    print $"Creating dev k8s cluster, name: ($name)"
     let result = (do -i { ^k3d $args } | complete)
     let err =  ($result | get stderr)
     if $err != "" {
@@ -21,12 +23,33 @@ export def-env cluster-list [
         }
     }
   sleep 2sec
-  let kubeconfig_path = (^k3d kubeconfig write demo-01)
-  let-env KUBECONFIG = $kubeconfig_path
+  let kubeconfig_path = (^k3d kubeconfig write $name)
+  if $export_kubeconfig {
+    let-env KUBECONFIG = $kubeconfig_path
+    let-env KUBE_CONFIG_PATH = $kubeconfig_path
+  }
+  return $kubeconfig_path
 }
 
-def list-cluster-names [] { ^k3d cluster list -oyaml | from yaml | get name }
-
+#Recreate k8s cluster.
+export def cluster-recreate [
+    name: string #Kubernetes cluster name
+    --expose_ingress: bool #Expose tcp/80 and tcp/443 network ports from cluster nodes
+] {
+   cluster-delete $name
+   cluster-create $name 
+}
+#Create a bunch of dev k8s clusters
+export def cluster-bunch [
+    base_name: string #Base cluster name.
+    cluster_numbers: int #Number of clusters that we should create
+] {
+    for count in 1..$cluster_numbers {
+        let cluster_name = $"($base_name)-($count)" 
+        let kubeconfig_path = (cluster-create $cluster_name --export_kubeconfig=false)
+        print $"Cluster successfully created, kubeconfig path: ($kubeconfig_path)"
+    }
+}
 
 #Delete DEV k8s cluster
 export def cluster-delete [
