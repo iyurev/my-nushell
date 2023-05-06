@@ -174,7 +174,6 @@ export extern "kubectl" [
     --vmodule: string
     --warnings-as-errors
     subcommand?: string@subcommands
-    
 ]
 
 

@@ -16,4 +16,3 @@ alias tf-apply = terraform apply -auto-approve
 alias tf-make-doc = terraform-docs markdown table --output-file MODULE_README.md --output-mode inject .
 alias tf-ftm = terraform fmt .
 alias tf-flush-dev-workspace = rm -f ./.terraform.lock.hcl  and rm -f ./terraform.tfstate and rm -f ./terraform.tfstate.backup and rm -rf ./.terraform
-
