@@ -9,7 +9,11 @@ export def-env cluster-create [
     name: string #Kubernetes cluster name
     --expose_ingress: bool #Expose tcp/80 and tcp/443 network ports from cluster nodes
     --export_kubeconfig: bool = true #Export environment variable KUBECONFIG
+    --recreate #Recreate cluster if it exists.
     ] {
+    if $recreate  {
+        cluster-delete $name
+    }
     let default_args = ["cluster", "create", $name, "--kubeconfig-update-default=false"]
     let expose_ingress_args = ["--port",  "80:80@loadbalancer", "--port", "443:443@loadbalancer"]
     let args = if $expose_ingress == true { $default_args | append expose_ingress_args  } else { $default_args }
@@ -31,14 +35,6 @@ export def-env cluster-create [
   return $kubeconfig_path
 }
 
-#Recreate k8s cluster.
-export def cluster-recreate [
-    name: string #Kubernetes cluster name
-    --expose_ingress: bool #Expose tcp/80 and tcp/443 network ports from cluster nodes
-] {
-   cluster-delete $name
-   cluster-create $name 
-}
 #Create a bunch of dev k8s clusters
 export def cluster-bunch [
     base_name: string #Base cluster name.
