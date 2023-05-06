@@ -9,7 +9,7 @@ let-env HOME = $nu.home-path
 let-env PATH = ($env.PATH | split row (char esep) | prepend $user_bin | prepend $brew_bin | append $"($env.GO_PATH)/bin" | append $local_bin) 
 
 use  ~/.nu/kd.nu
-use ~/.nu/k3dcli.nu
+use ~/.nu/k3d.nu
 use  ~/.nu/tools.nu *
 use ~/.nu/gc.nu
 use ~/.nu/ansible.nu
