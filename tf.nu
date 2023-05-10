@@ -19,3 +19,19 @@ export def-env tf-init-gitlab-baclend [  gitlab_hostname: string,
 
     terraform init
 }
+
+export def megalinter [
+    project_dir?: string
+    --image: string =  "docker.io/oxsecurity/megalinter:v6" #oxsecurity/megalinter/flavors/terraform@v6.22.2
+] {
+    let project_dir = if $project_dir == null {$env.PWD} else {$project_dir}
+    docker run -ti --rm -v $"($project_dir):/workspace" -e "DISABLE_ERRORS_LINTERS=["TERRAFORM_TERRASCAN"]" -e "ENABLE=TERRAFORM" -e "DEFAULT_WORKSPACE=/workspace" -e "TERRAFORM_FILTER_REGEX_EXCLUDE=sandbox/*" $image 
+}
+
+export def make-doc [
+    project_dir?: string
+    --image: string = "quay.io/terraform-docs/terraform-docs:0.16.0"
+ ] {
+    let project_dir = if $project_dir == null {$env.PWD} else {$project_dir}
+    docker run --rm --volume $"($project_dir):/terraform-docs" -u $"(id -u)" $image markdown /terraform-docs  --output-file /terraform-docs/MODULE_README.md
+}

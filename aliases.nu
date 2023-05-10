@@ -14,5 +14,8 @@ alias tf-init = terraform init
 alias tf-plan = terraform plan
 alias tf-apply = terraform apply -auto-approve
 alias tf-make-doc = terraform-docs markdown table --output-file MODULE_README.md --output-mode inject .
-alias tf-ftm = terraform fmt .
+alias tf-fmt = terraform fmt .
 alias tf-flush-dev-workspace = rm -f ./.terraform.lock.hcl  and rm -f ./terraform.tfstate and rm -f ./terraform.tfstate.backup and rm -rf ./.terraform
+
+#Git
+#alias git-init-myself =  git config --global user.name "Igor Yurev"; git config --global user.email idyurev@gmail.com
