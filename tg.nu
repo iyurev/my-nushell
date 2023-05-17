@@ -16,3 +16,9 @@ export def tg-apply-force [] {
 export def tg-run-all-apply [] {
     ^terragrunt  run-all apply  --terragrunt-non-interactive --terragrunt-include-external-dependencies
 }
+
+export def tg-fmt [
+    project_dir: string = "."
+] {
+    terragrunt hclfmt $project_dir
+}

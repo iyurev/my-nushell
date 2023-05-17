@@ -35,3 +35,9 @@ export def make-doc [
     let project_dir = if $project_dir == null {$env.PWD} else {$project_dir}
     docker run --rm --volume $"($project_dir):/terraform-docs" -u $"(id -u)" $image markdown /terraform-docs  --output-file /terraform-docs/MODULE_README.md
 }
+
+export def fmt [
+    project_dir: string = "."
+] {
+    ^terraform fmt -recursive $project_dir
+}

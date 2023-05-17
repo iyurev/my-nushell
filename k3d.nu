@@ -4,6 +4,13 @@ def cluster_already_exists [err: string] {
 }
 def list-cluster-names [] { ^k3d cluster list -oyaml | from yaml | get name }
 
+
+def-env export_cluster_credentials [cluster_name: string] {
+    let kubeconfig_path = (^k3d kubeconfig write $cluster_name)
+    let-env KUBECONFIG = $kubeconfig_path
+    let-env KUBE_CONFIG_PATH = $kubeconfig_path
+}
+
 #Shortcut for creating DEV K8S clusters
 export def-env cluster-create [
     name: string #Kubernetes cluster name
@@ -22,6 +29,9 @@ export def-env cluster-create [
     let err =  ($result | get stderr)
     if $err != "" {
         if (cluster_already_exists $err) {
+            if $export_kubeconfig {
+            export_cluster_credentials $name
+            }
             print "Cluster already exists, nothing to do."
             return
         }
@@ -29,8 +39,7 @@ export def-env cluster-create [
   sleep 2sec
   let kubeconfig_path = (^k3d kubeconfig write $name)
   if $export_kubeconfig {
-    let-env KUBECONFIG = $kubeconfig_path
-    let-env KUBE_CONFIG_PATH = $kubeconfig_path
+        export_cluster_credentials $name
   }
   return $kubeconfig_path
 }
