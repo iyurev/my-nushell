@@ -12,3 +12,7 @@ export def tg-plan [] {
 export def tg-apply-force [] {
     ^terragrunt apply -auto-approve
 }
+
+export def tg-run-all-apply [] {
+    ^terragrunt  run-all apply  --terragrunt-non-interactive --terragrunt-include-external-dependencies
+}
