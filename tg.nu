@@ -17,6 +17,10 @@ export def tg-run-all-apply [] {
     ^terragrunt  run-all apply  --terragrunt-non-interactive --terragrunt-include-external-dependencies
 }
 
+export def tg-run-all-plan [] {
+    ^terragrunt  run-all plan  --terragrunt-non-interactive --terragrunt-include-external-dependencies
+}
+
 export def tg-fmt [
     project_dir: string = "."
 ] {

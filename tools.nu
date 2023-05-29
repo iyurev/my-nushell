@@ -21,3 +21,18 @@ export def ssh-xterm [host: string] {
 export def lsd [] {
    (ls -la | where type == dir)
 }
+
+
+export def git-squash-commits [
+    branch_name: string
+    commit_message: string
+    --source_branch: string = "master"
+] {
+    let temp_branch = $"($branch_name)-temp"
+    ^git checkout -b $temp_branch
+    ^git checkout $branch_name
+    ^git fetch
+    ^git reset --hard $"origin/($source_branch)"
+    ^git merge --squash $temp_branch
+    ^git commit -m $commit_message
+}

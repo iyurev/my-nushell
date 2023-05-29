@@ -18,3 +18,4 @@ use ~/.nu/kubectl-completions.nu *
 use  ~/.nu/ks.nu
 use ~/.nu/ts.nu 
 use ~/.nu/tg.nu *
+use ~/.nu/tf.nu *

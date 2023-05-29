@@ -20,15 +20,19 @@ export def-env tf-init-gitlab-baclend [  gitlab_hostname: string,
     terraform init
 }
 
-export def megalinter [
+export def tf-megalinter [
     project_dir?: string
     --image: string =  "docker.io/oxsecurity/megalinter:v6" #oxsecurity/megalinter/flavors/terraform@v6.22.2
+    --flush_reports
 ] {
     let project_dir = if $project_dir == null {$env.PWD} else {$project_dir}
-    docker run -ti --rm -v $"($project_dir):/workspace" -e "DISABLE_ERRORS_LINTERS=["TERRAFORM_TERRASCAN"]" -e "ENABLE=TERRAFORM" -e "DEFAULT_WORKSPACE=/workspace" -e "TERRAFORM_FILTER_REGEX_EXCLUDE=sandbox/*" $image 
+    if $flush_reports {
+        sudo rm -rf $"($project_dir)/megalinter-reports"
+    }
+    docker run -ti --rm -v $"($project_dir):/workspace" -e "ENABLE=TERRAFORM" -e "DEFAULT_WORKSPACE=/workspace" $image 
 }
 
-export def make-doc [
+export def tf-make-doc [
     project_dir?: string
     --image: string = "quay.io/terraform-docs/terraform-docs:0.16.0"
  ] {
@@ -36,8 +40,16 @@ export def make-doc [
     docker run --rm --volume $"($project_dir):/terraform-docs" -u $"(id -u)" $image markdown /terraform-docs  --output-file /terraform-docs/MODULE_README.md
 }
 
-export def fmt [
+export def tf-fmt [
     project_dir: string = "."
 ] {
     ^terraform fmt -recursive $project_dir
 }
+
+export def  tf-flush-dev-workspace [] {
+    ^rm -f ./.terraform.lock.hcl
+    ^rm -f ./terraform.tfstate
+    ^rm -f ./terraform.tfstate.backup
+    ^rm -rf ./.terraform
+}
+
