@@ -12,7 +12,7 @@ def-env export_cluster_credentials [cluster_name: string] {
 }
 
 #Shortcut for creating DEV K8S clusters
-export def-env cluster-create [
+export def-env k3d-cluster-create [
     name: string #Kubernetes cluster name
     --expose_ingress: bool #Expose tcp/80 and tcp/443 network ports from cluster nodes
     --export_kubeconfig: bool = true #Export environment variable KUBECONFIG
@@ -45,7 +45,7 @@ export def-env cluster-create [
 }
 
 #Create a bunch of dev k8s clusters
-export def cluster-bunch [
+export def k3d-cluster-bunch [
     base_name: string #Base cluster name.
     cluster_numbers: int #Number of clusters that we should create
 ] {
@@ -57,7 +57,7 @@ export def cluster-bunch [
 }
 
 #Delete DEV k8s cluster
-export def cluster-delete [
+export def k3d-cluster-delete [
     name: string@list-cluster-names #Cluster name
 ] {
     let cluster_name = if $name == "all" { "--all" } else { $name }
