@@ -6,6 +6,7 @@ alias edit-my-nushell = code $"($nu.home-path)/.nu"
 alias kc = kubectl
 alias dtc = detect columns
 alias nv = nvim
+alias k = kubectl
 
 
 

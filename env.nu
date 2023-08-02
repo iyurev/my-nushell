@@ -12,7 +12,7 @@ use  ~/.nu/kd.nu
 use ~/.nu/k3d.nu *
 use  ~/.nu/tools.nu *
 use ~/.nu/gc.nu
-use ~/.nu/ansible.nu
+#use ~/.nu/ansible.nu
 use  ~/.nu/scm.nu
 use  ~/.nu/ks.nu
 use ~/.nu/ts.nu 

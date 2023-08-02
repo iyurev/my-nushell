@@ -1,5 +1,11 @@
+def loggable_kinds [] {
+    [
+    "deployment"
+    ]
+}
+
 def resource_kind_dynamic [] {
-    ^kubectl api-resources | dtc | get NAME
+    ^kubectl api-resources | detect columns | get NAME
 }
 
 
@@ -11,8 +17,18 @@ def list-kubeconfigs [] {
     ls  ~/.kube/ | where type == file | get name 
 }
 
+def list-contexts [] {
+    ^kubectl config get-contexts -o name | lines
+}
+
 def list-clusters [] {
-    open $env.KUBECONFIG  | from yaml | get clusters | get name
+    ^kubectl config  get-clusters  | lines 
+}
+
+export def use-context [
+    name: string@list-contexts
+] {
+    ^kubectl config use-context $name
 }
 
 def kc-get-in-all-namespaces [kind: string] {
@@ -37,12 +53,23 @@ export def get-by-label [namespace: string@list-namespaces kind: string@resource
     ^kubectl -n $namespace get -l $label  $kind -oname
 }
 
+
 export def get-all-failed-pods [] {
         kc-get-in-all-namespaces  pods | where status.phase == "Failed" | select  metadata.namespace metadata.name status.phase
 }
 
 export def get-all-pending-pods [] {
         kc-get-in-all-namespaces  pods | where status.phase == "Pending" | select  metadata.namespace metadata.name status.phase
+}
+
+
+export def logs-tail [
+    namespace: string@list-namespaces
+    name: string
+    --kind: string@loggable_kinds = "deployment"
+
+] {
+    ^kubectl  --namespace $namespace logs -f --tail=1000 $"($kind)/($name)"
 }
 
 
