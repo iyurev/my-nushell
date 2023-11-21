@@ -20,8 +20,8 @@ def create-cluster-flags [] {
 export def-env create [name: string] {
     let kubeconfig_path  = $"/tmp/($name)-kubeconfig"
     kind create cluster  --name ($name) --kubeconfig ($kubeconfig_path)
-    let-env KUBECONFIG = $kubeconfig_path
-    let-env KUBE_CONFIG_PATH = $kubeconfig_path
+    $env.KUBECONFIG = $kubeconfig_path
+    $env.KUBE_CONFIG_PATH = $kubeconfig_path
 }
 
 export def list [] {

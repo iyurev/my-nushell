@@ -6,6 +6,10 @@ export def ssl-check-cert [cert_file: string] {
     openssl x509 -in  $cert_file -text 
 }
 
+export def passwd-hash [] {
+    openssl  passwd -6
+}
+
 export def git-time-tag [branch: string] {
     $"(date now | date format '%Y%m%d%H%M')-($branch)"
 }

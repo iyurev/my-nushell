@@ -7,8 +7,8 @@ def list-cluster-names [] { ^k3d cluster list -oyaml | from yaml | get name }
 
 def-env export_cluster_credentials [cluster_name: string] {
     let kubeconfig_path = (^k3d kubeconfig write $cluster_name)
-    let-env KUBECONFIG = $kubeconfig_path
-    let-env KUBE_CONFIG_PATH = $kubeconfig_path
+    $env.KUBECONFIG = $kubeconfig_path
+    $env.KUBE_CONFIG_PATH = $kubeconfig_path
 }
 
 #Shortcut for creating DEV K8S clusters

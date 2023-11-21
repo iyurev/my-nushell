@@ -37,12 +37,14 @@ def kc-get-in-all-namespaces [kind: string] {
 
 export def-env set-namespace [namespace: string@list-namespaces] {
     print $"Work with namespace: ($namespace)"
-    let-env KUBE_NAMESPACE = $namespace
+    $env.KUBE_NAMESPACE = $namespace
+    ^kubectl config  set-context --current $"--namespace=($namespace)"
+
 }
 
 export def-env set-kubeconfig [path: string@list-kubeconfigs] {
     print $"Use kubeconfig: ($path)"
-    let-env KUBECONFIG = $path    
+    $env.KUBECONFIG = $path    
 }
 
 export def search-ns [name: string] {
@@ -73,6 +75,19 @@ export def logs-tail [
 }
 
 
+export def d8-grafana-url [] {
+    let host = (^kubectl --namespace  d8-monitoring get ingress grafana-dex-authenticator -o yaml  | from yaml  | get spec.rules | get 0 | get host)
+    print $"https://($host)"
+}
 
+export def d8-kibana-url [] {
+    let host = (^kubectl --namespace  infra-elklogs  get ingress kibana -o yaml  | from yaml  | get spec.rules | get 0 | get host)
+    print $"https://($host)"
+}
+
+
+#kubectl get node -o json | from json  | get items | where metadata.labels.'node.deckhouse.io/group' =~ "frontend" | select  metadata.name status.addresses.address.0 metadata.name status.addresses.address.1
+
+#kubectl get node -o json | from json  | get items  | select  metadata.name status.addresses.address.0 metadata.name status.addresses.address.1  | where  status_addresses_address_1 =~ '10.203.45' | length
 
 
