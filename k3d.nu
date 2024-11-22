@@ -5,17 +5,17 @@ def cluster_already_exists [err: string] {
 def list-cluster-names [] { ^k3d cluster list -oyaml | from yaml | get name }
 
 
-def-env export_cluster_credentials [cluster_name: string] {
+def --env export_cluster_credentials [cluster_name: string] {
     let kubeconfig_path = (^k3d kubeconfig write $cluster_name)
     $env.KUBECONFIG = $kubeconfig_path
     $env.KUBE_CONFIG_PATH = $kubeconfig_path
 }
 
 #Shortcut for creating DEV K8S clusters
-export def-env k3d-cluster-create [
+export def --env k3d-cluster-create [
     name: string #Kubernetes cluster name
-    --expose_ingress: bool #Expose tcp/80 and tcp/443 network ports from cluster nodes
-    --export_kubeconfig: bool = true #Export environment variable KUBECONFIG
+    --expose_ingress  #Expose tcp/80 and tcp/443 network ports from cluster nodes
+    --export_kubeconfig   #Export environment variable KUBECONFIG
     --recreate #Recreate cluster if it exists.
     ] {
     if $recreate  {

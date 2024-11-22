@@ -35,7 +35,7 @@ export def update-zoxie-db [server_name: string@servers] {
 }
 
 export def projects [server_name: string@servers] {
-    run-external find $"($nu.home-path)/src/($server_name)/"  "-type" "d"  "-name" '.git'  --redirect-stdout  | lines | split column '/.git' | get column1
+    run-external find $"($nu.home-path)/src/($server_name)/"  "-type" "d"  "-name" '.git'  | lines | split column '/.git' | get column1
 }
 
 export def projects-fzf [server_name: string@servers] {

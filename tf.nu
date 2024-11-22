@@ -1,4 +1,4 @@
-export def-env tf-init-gitlab-baclend [  gitlab_hostname: string,
+export def --env tf-init-gitlab-baclend [  gitlab_hostname: string,
                                          gitlab_project_id: int,
                                          gitlab_username: string,
                                          gitlab_token: string,
