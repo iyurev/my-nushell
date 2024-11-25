@@ -1,6 +1,6 @@
 use helpers.nu *
 
-export def get-deployment [
+export def "get deployment" [
     namespace: string@list-namespaces
     name: string@list_deployments_compl
     --spec-only

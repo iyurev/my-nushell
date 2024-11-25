@@ -9,9 +9,9 @@
 #kubectl --namespace  default exec debug-pod -i -t -- sh -il
 use helpers.nu *
 
-export def debug-pod [
+export def "debug pod" [
     namespace: string@list-namespaces
-    name: string@list_pods_compl
+    name: string@list_resources_compl
     container: string
     --image="docker-remote-docker-io.art.lmru.tech/nicolaka/netshoot:latest"
 ] {

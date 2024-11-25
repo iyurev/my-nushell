@@ -2,32 +2,56 @@ export def list-namespaces [] {
     ^kubectl get ns --output json | from json | get items | get metadata.name
 }
 
-export def list_resources_compl [
-        context: string
-        resource_kind: string
-        ] {
+export def list_resources_compl [context: string] {
+     
+   let  kind = (get_kind_from_ctx $context)
  
-   let n = ($context | split row -n 3 " " | uniq | last | str trim)
+   let namespace = (get_namespace_from_ctx $context)
 
-   let resources = (^kubectl --namespace $n  get $resource_kind  -ojson | from json | get items | get metadata.name)
+   let resources = (^kubectl --namespace $namespace  get $kind  -ojson | from json | get items | get metadata.name)
    
    return $resources
    
 }
 
+
+
+export def get_namespace_from_ctx [context: string] {
+
+   let ns = ($context | split row  -r '\s+' | uniq | get 3  | str trim)
+
+   return $ns
+}
+
+export def get_kind_from_ctx [context: string] {
+
+   let kind = ($context | split row  -r '\s+' | uniq | get 2  | str trim)
+
+   return $kind
+}
+
+
+
 export def list_deployments_compl [
     context: string
     
 ] {
-    return (list_resources_compl $context "deployment")
+    return (list_resources_compl $context)
 }
 
 export def list_pods_compl [
     context: string
     
 ] {
-    return (list_resources_compl $context "pod")
+    return (list_resources_compl $context)
 }
+
+
+
+
+
+
+
 
 
 def list-kubeconfigs [] {
