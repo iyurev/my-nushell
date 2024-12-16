@@ -52,3 +52,4 @@ export def ansible-shell [--image: string@ansible_container_images] {
     docker run -ti --rm -v $wd  -w /workspace $image sh
     
 }
+

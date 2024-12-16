@@ -17,3 +17,12 @@ export def "debug pod" [
 ] {
      ^kubectl --namespace  $namespace   debug --share-processes=true  -it $name  --image $image  --target $container
 }
+
+export def "debug pod with-redis-cli" [
+    namespace: string@list-namespaces
+    name: string@list_resources_compl
+    container: string
+    --image="docker-remote-docker-io.art.lmru.tech/nicolaka/netshoot:latest"
+] {
+     ^kubectl --namespace  $namespace   debug --share-processes=true  -it $name  --image $image  --target $container
+}

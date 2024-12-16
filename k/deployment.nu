@@ -2,43 +2,24 @@ use helpers.nu *
 
 export def "get deployment" [
     namespace: string@list-namespaces
-    name: string@list_deployments_compl
-    --spec-only
-    --containers-only
-    --resources-only
-    --pod-metadata
+    name: string@list_resources_compl
+
 ] {
 
-    let main_res = (^kubectl -n $namespace get deployment $name -oyaml | from yaml)
+     return (^kubectl -n $namespace get deployment $name -oyaml | from yaml)
 
-    if $spec_only {
-        return ($main_res | get spec  )
-    }
-
-    if $containers_only {
-        return ($main_res | get spec.template.spec.containers)
-    }
-    if $resources_only {
-        return ($main_res | get spec.template.spec.containers | select -i name image resources.requests resources.limits)
-    }
-    if $pod_metadata  {
-        return ($main_res | get spec.template.metadata)
-    }
-
-   return $main_res
+    
 }
 
-export def get-deployment-pretty-yaml [
+export def "list deployments" [
     namespace: string@list-namespaces
-    name: string@list_deployments_compl
-    --bat 
-] {  
-    let raw_data = (get-deployment $namespace $name)
+] {
+    let all_deployments = (^kubectl -n $namespace get deployment -oyaml | from yaml)
+    if ($all_deployments.items | length)  == 0 {
+        print "there are no deployments in namespace"
+        return
+    }
 
-     if $bat {
-        $raw_data | to yaml | bat -l yaml
-     }   
-     
-    $raw_data | to yaml | yq
+    return ($all_deployments | get items | select metadata.name metadata.namespace)
 }
 

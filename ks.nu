@@ -75,14 +75,14 @@ export def logs-tail [
 }
 
 # Show standard Grafana URL
-export def d8-grafana-url [] {
+export def "open d8-grafana" [] {
     let host = (^kubectl --namespace  d8-monitoring get ingress grafana-dex-authenticator -o yaml  | from yaml  | get spec.rules | get 0 | get host)
-    print $"https://($host)"
+    ^open $"https://($host)"
 }
 
-export def d8-kibana-url [] {
+export def "open d8-kibana" [] {
     let host = (^kubectl --namespace  infra-elklogs  get ingress kibana -o yaml  | from yaml  | get spec.rules | get 0 | get host)
-    print $"https://($host)"
+    ^open $"https://($host)"
 }
 
 # Get all ingresses in the namespace with additional details
